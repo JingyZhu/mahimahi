@@ -11,7 +11,7 @@ web = "https://www." + sys.argv[1]
 sem = threading.Semaphore(0)
 
 def run_chrome():
-    Popen(['chromium-browser', '--headless', '--remote-debugging-port=9222', '--disable-gpu', '--ignore-certificate-errors', '--user-data-dir=/tmp/nonexistent$(date +%s%N)'])
+    Popen(['chromium-browser', '--headless', '--remote-debugging-port=9222', '--ignore-certificate-errors', '--user-data-dir=/tmp/nonexistent$(date +%s%N)'])
     sem.acquire()
     call(['pkill', 'chromium'])
 
@@ -20,7 +20,6 @@ chrome.start()
 
 time.sleep(2)
 
-print(web)
 begin = time.time()
 call(['node', 'run.js', web])
 end = time.time()
