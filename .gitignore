@@ -3,6 +3,7 @@
 *.lo
 *.la
 *.slo
+*.json
 .deps
 Makefile
 Makefile.in

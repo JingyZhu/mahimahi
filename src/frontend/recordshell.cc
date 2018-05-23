@@ -100,7 +100,7 @@ int main( int argc, char *argv[] )
         }
 
         ChildProcess tcpdump("tcpdump", [&]() {
-                        return ezexec({"/usr/sbin/tcpdump", "-i", "enp0s3", "tcp", "-w",  directory + "traffic.pcap"});
+                        return ezexec({"/usr/sbin/tcpdump", "-i", "ens3", "tcp and port not 22", "-w",  directory + "traffic.pcap"});
         });
         delay(1000);
         run({"/bin/chmod", "771", directory+"traffic.pcap"});

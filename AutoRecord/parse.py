@@ -23,7 +23,8 @@ def parse_pkt(pkt):
     return (time, src, dst)
 
 def is_private(address):
-    return address.split('.')[0] == '192' and address.split('.')[1] == '168'
+    return address == '172.31.9.156'
+    # return address.split('.')[0] == '192' and address.split('.')[1] == '168'
 
 def ping(ip):
     print(ip)
