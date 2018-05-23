@@ -18,7 +18,7 @@ def run_chrome():
 chrome = threading.Thread(target=run_chrome)
 chrome.start()
 
-time.sleep(4)
+time.sleep(2)
 
 begin = time.time()
 call(['node', 'run.js', web])
