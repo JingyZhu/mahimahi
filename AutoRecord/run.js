@@ -4,8 +4,10 @@ const CDP = require('chrome-remote-interface');
 CDP((client) => {
     // extract domains
     const {Network, Page, Security} = client;
+    // console.log(Security);
 
     Security.setIgnoreCertificateErrors({ignore: true});
+    //Security.disable();
 
     // setup handlers
     Network.requestWillBeSent((params) => {

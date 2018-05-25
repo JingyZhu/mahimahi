@@ -73,7 +73,7 @@ module AP_MODULE_DECLARE_DATA deepcgi_module =
 
 int deepcgi_handler( request_rec* inpRequest )
 {
-    //time_t begin = time(NULL);
+    time_t begin = time(NULL);
 
     if ( !inpRequest->handler || strcmp( inpRequest->handler, "deepcgi-handler" ))
     {
@@ -156,8 +156,9 @@ int deepcgi_handler( request_rec* inpRequest )
     int i = WEXITSTATUS(pclose(fp));
 
     if (i) { // Do this then 404 5secs delay disappear
+    time_t end = time(NULL);
         char c[50] = {0};
-        sprintf(c, "Dummy \r\n");
+        sprintf(c, "Dummy %ld %ld \r\n", begin, end);
         ap_rwrite(c, 50, inpRequest);
     }
     return OK;

@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
             }
         }
 
-        if (duration) delay(duration);
+        if (duration) delay(0);
         if ( best_score > 0 ) { /* give client the best match */
             cout << HTTPResponse( best_match.response() ).str();
             return EXIT_SUCCESS;

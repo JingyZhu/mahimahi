@@ -23,8 +23,7 @@ def parse_pkt(pkt):
     return (time, src, dst)
 
 def is_private(address):
-    return address == '172.31.9.156'
-    # return address.split('.')[0] == '192' and address.split('.')[1] == '168'
+    return address.split('.')[0] == '10' and address.split('.')[1] == '0'
 
 def ping(ip):
     print(ip)
@@ -41,7 +40,7 @@ def main():
         time, src, dst = parse_pkt(pkt)
         if is_private(src) and dst not in ip_map:  # SYN msg
             ip_map[dst] = [time]
-        elif is_private(dst) and len(ip_map[src]) == 1:
+        elif is_private(dst) and src in ip_map and len(ip_map[src]) == 1:
             ip_map[src].append(time)
     # for ip in ip_map:
     #     rtt = ping(ip)

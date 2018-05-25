@@ -1,17 +1,20 @@
 from subprocess import *
 import os
 
-#call(['python3', 'get_web.py'])
+# call(['python3', 'get_web.py'])
 
-web_list = open('weblist', 'r').read().split('\n')
-while web_list[-1] == "":
-    del web_list[-1]
+webf = open('weblist', 'r')
+webs = webf.read().split('\n')
+webf.close()
 
-mmwebrecord = os.path.join(os.environ['mmpath'], 'usr/bin/mm-webrecord')
-repo =  os.path.join(os.environ['mmpath'], 'tmp')
-print(mmwebrecord)
+while webs[-1] == '':
+    del webs[-1]
 
-for web in web_list:
-    print(web + '\n')
-    call([mmwebrecord, os.path.join(repo, web), 'python3', 'chrome.py', web], env=os.environ.copy())
-    call(['python3', 'parse.py', os.path.join(repo, web, 'traffic.pcap')])
+for web in webs:
+    web = web.split(',')[0]
+    f = open(os.path.join('plTime', web), 'w+')
+    f.close()
+
+for i in range(3):
+    call(['python3', 'record.py'])
+    call(['python3', 'replay.py'])
