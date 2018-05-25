@@ -143,7 +143,8 @@ int main( int argc, char *argv[] )
         /* set up web servers */
         vector< WebServer > servers;
         for ( const auto ip_port : unique_ip_and_port ) {
-            servers.emplace_back( ip_port, working_directory, directory, 0);
+            servers.emplace_back( ip_port, working_directory, directory, ip_delays[ip_port.ip()]);
+            // cout << "Delay of " << ip_port.ip() << "is: " << ip_delays[ip_port.ip()] << endl;
         }
 
         /* set up DNS server */

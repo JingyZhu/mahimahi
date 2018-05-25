@@ -106,7 +106,7 @@ int main( int argc, char *argv[] )
 {
     try {
         unsigned duration = (argc > 1)?atoi(argv[1]):0;
-
+    
         assert_not_root();
         const string working_directory = safe_getenv( "MAHIMAHI_CHDIR" );
         const string recording_directory = safe_getenv( "MAHIMAHI_RECORD_PATH" );
@@ -146,7 +146,7 @@ int main( int argc, char *argv[] )
         } else {                /* no acceptable matches for request */
             cout << "HTTP/1.1 404 Not Found" << CRLF;
             cout << "Content-Type: text/plain" << CRLF << CRLF;
-            cout << "replayserver: could not find a match for " << request_line << CRLF;
+            cout << "replayserver: could not find a match for " << request_line <<CRLF;
             return EXIT_FAILURE;
         }
     } catch ( const exception & e ) {

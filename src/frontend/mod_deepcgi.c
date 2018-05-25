@@ -6,6 +6,8 @@
 #include "http_core.h"
 #include "http_protocol.h"
 
+#include <time.h>
+
 extern const char* replayserver_filename;
 
 static void deepcgi_hooks( apr_pool_t* inpPool );
@@ -71,6 +73,8 @@ module AP_MODULE_DECLARE_DATA deepcgi_module =
 
 int deepcgi_handler( request_rec* inpRequest )
 {
+    //time_t begin = time(NULL);
+
     if ( !inpRequest->handler || strcmp( inpRequest->handler, "deepcgi-handler" ))
     {
         return DECLINED;
@@ -149,8 +153,13 @@ int deepcgi_handler( request_rec* inpRequest )
     // To ensure that connection is kept-alive
     ap_set_keepalive( inpRequest );
 
-    pclose( fp );
+    int i = WEXITSTATUS(pclose(fp));
 
+    if (i) { // Do this then 404 5secs delay disappear
+        char c[50] = {0};
+        sprintf(c, "Dummy \r\n");
+        ap_rwrite(c, 50, inpRequest);
+    }
     return OK;
 }
 
