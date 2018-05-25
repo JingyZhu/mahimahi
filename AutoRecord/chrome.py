@@ -13,14 +13,14 @@ sem = threading.Semaphore(0)
 record = True if len(sys.argv) == 3 and sys.argv[2]=="record" else False
 
 def run_chrome():
-    Popen(['chromium-browser', '--remote-debugging-port=9222', '--ignore-certificate-errors', '--user-data-dir=/tmp/nonexistent$(date +%s%N)', '--disk-cache-size=1'])
+    Popen(['chromium-browser', '--headless', '--remote-debugging-port=9222', '--disable-gpu', '--ignore-certificate-errors', '--user-data-dir=/tmp/nonexistent$(date +%s%N)', '--disk-cache-size=1'])
     sem.acquire()
-    # call(['pkill', 'chromium'])
+    call(['pkill', 'chromium'])
 
 chrome = threading.Thread(target=run_chrome)
 chrome.start()
 
-time.sleep(10)
+time.sleep(2)
 begin = time.time()
 call(['node', 'run.js', web])
 end = time.time()

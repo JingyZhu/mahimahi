@@ -156,10 +156,15 @@ int deepcgi_handler( request_rec* inpRequest )
     int i = WEXITSTATUS(pclose(fp));
 
     if (i) { // Do this then 404 5secs delay disappear
-    time_t end = time(NULL);
+        time_t end = time(NULL);
         char c[50] = {0};
         sprintf(c, "Dummy %ld %ld \r\n", begin, end);
         ap_rwrite(c, 50, inpRequest);
+    }
+    else{
+        char c[5] = {0};
+        sprintf(c, " \r\n");
+        ap_rwrite(c, 5, inpRequest);
     }
     return OK;
 }
