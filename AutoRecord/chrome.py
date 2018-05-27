@@ -27,11 +27,11 @@ end = time.time()
 
 stage = 'record' if record else 'replay'
 lastslash = web.rfind('/')
-time_collection = open(os.path.join('plTime', web[lastslash+1:]), 'a')
+time_collection = open(os.path.join('plTime', web[lastslash+5:]), 'a')
 time_collection.write("{}\t{}\n".format(stage, str(end-begin)))
 time_collection.close()
 
 if record:
-    time.sleep(3)
+    time.sleep(1)
 
 sem.release()

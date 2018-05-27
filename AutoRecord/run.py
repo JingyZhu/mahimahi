@@ -15,6 +15,7 @@ for web in webs:
     f = open(os.path.join('plTime', web), 'w+')
     f.close()
 
-for i in range(3):
+for i in range(4):
+    print('Round: ' + str(i))
     call(['python3', 'record.py'])
     call(['python3', 'replay.py'])
