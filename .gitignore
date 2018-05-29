@@ -44,3 +44,7 @@ Makefile.in
 env
 node_modules
 .vscode
+*/RTT/*
+*/plTime/*
+AutoRecord/sort.py
+AutoRecord/trace_file
