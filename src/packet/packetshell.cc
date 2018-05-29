@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 #include <sys/socket.h>
 #include <net/route.h>
@@ -49,7 +50,6 @@ void PacketShell<FerryQueueType>::start_uplink( const string & shell_prefix,
 {
     /* g++ bug 55914 makes this hard before version 4.9 */
     BindWorkAround::bind<FerryQueueType, Targs&&...> ferry_maker( forward<Targs>( Fargs )... );
-
     /*
       This is a replacement for expanding the parameter pack
       inside the lambda, e.g.:
@@ -62,7 +62,6 @@ void PacketShell<FerryQueueType>::start_uplink( const string & shell_prefix,
     /* Fork */
     event_loop_.add_special_child_process( 77, "packetshell", [&]() {
             TunDevice ingress_tun( "ingress", ingress_addr(), egress_addr() );
-
             /* bring up localhost */
             interface_ioctl( SIOCSIFFLAGS, "lo",
                              [] ( ifreq &ifr ) { ifr.ifr_flags = IFF_UP; } );
@@ -112,7 +111,6 @@ void PacketShell<FerryQueueType>::start_uplink( const string & shell_prefix,
             inner_ferry.add_child_process( join( command ), [&]() {
                     /* tweak bash prompt */
                     prepend_shell_prefix( shell_prefix );
-
                     return ezexec( command, true );
                 } );
 
