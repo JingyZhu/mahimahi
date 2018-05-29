@@ -4,6 +4,7 @@ from statistics import median
 from subprocess import *
 
 files = os.listdir('plTime')
+errors = []
 
 def parse_error(filename):
     errors = []
@@ -45,6 +46,9 @@ for file in files:
     error = parse_error(os.path.join('plTime',file))
     num_servers = parse_server((os.path.join('RTT', file)))
     print('{} (server {}) error is :\t{}%'.format(file, num_servers, error*100))
+    errors.append(error)
     call(['cat', os.path.join('plTime', file)])
     print('RTT: ')
     call(['cat', os.path.join('RTT', file)])
+
+errors.sort()

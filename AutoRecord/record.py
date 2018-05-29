@@ -11,6 +11,8 @@ while web_list[-1] == "":
     del web_list[-1]
 
 mmwebrecord = os.path.join(os.environ['mmpath'], 'usr/bin/mm-webrecord')
+mmlink = os.path.join(os.environ['mmpath'], 'usr/bin/mm-link')
+
 repo =  os.path.join(os.environ['mmpath'], 'tmp')
 
 i = 0
@@ -23,5 +25,9 @@ for web in web_list:
     print(str(i) + " record: " + aurl)
     web = web[0]
     # call(['rm', '-rf', os.path.join(repo, web)])
-    call([mmwebrecord, os.path.join(repo, web), 'python3', 'chrome.py', url, 'record'], env=os.environ.copy(), stdout=FNULL, stderr=STDOUT)
-    call(['python3', 'parse.py', os.path.join(repo, web, 'traffic.pcap')])
+    try:
+        call([mmwebrecord, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url, 'record'], timeout=30, env=os.environ.copy(), stdout=FNULL, stderr=STDOUT)
+        call(['python3', 'parse.py', os.path.join(repo, web, 'traffic.pcap')])
+    except Exception as e:
+        print("Something wrong with recording {}: {}".format(web, str(e)) )
+   

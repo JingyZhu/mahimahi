@@ -105,7 +105,7 @@ unsigned int match_score( const MahimahiProtobufs::RequestResponse & saved_recor
 int main( int argc, char *argv[] )
 {
     try {
-       unsigned duration = (argc > 1)?atoi(argv[1]):0;
+       // unsigned duration = (argc > 1)?atoi(argv[1]):0;
     
         assert_not_root();
         const string working_directory = safe_getenv( "MAHIMAHI_CHDIR" );
@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
             }
         }
 
-        if (duration) delay(duration);
+        // if (duration) delay(duration);
         if ( best_score > 0 ) { /* give client the best match */
             cout << HTTPResponse( best_match.response() ).str();
             return EXIT_SUCCESS;

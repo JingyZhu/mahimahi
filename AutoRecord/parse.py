@@ -10,8 +10,8 @@ pkts = rdpcap(sys.argv[1])
 ip_map = {} # ip: [S, SA]
 ping_map = {}
 ip_conversation_time = {}
-max_step = 0.4
-step = 0.025
+max_step = 0.3
+step = 0.015
 base = 1 - max_step - step
 
 def sec_to_datetime(sec):
@@ -53,7 +53,7 @@ def min(a, b):
     return a
 
 def coef_calc(times, rtt):
-    return (times + max(1 , times / max(1, ceil(rtt/0.05)))) / 2
+    return max(1 , times / max(1, ceil(rtt/0.05)))
 
 def main():
     for pkt in pkts:
@@ -75,8 +75,10 @@ def main():
         if len(times) < 2:
             continue
         rtt = times[1] - times[0]
-        f.write('{}\t{}\t{}\t{}\n'.format(ip, rtt * coef_calc(ip_conversation_time[ip][0], rtt), ip_conversation_time[ip][1], rtt ))
-        f2.write('{}\t{}\t{}\t{}\n'.format(ip,rtt * coef_calc(ip_conversation_time[ip][0], rtt), ip_conversation_time[ip][1], rtt ))
+        # f.write('{}\t{}\t{}\t{}\n'.format(ip, rtt * coef_calc(ip_conversation_time[ip][0], rtt), ip_conversation_time[ip][1], rtt ))
+        f.write('{}\t{}\t{}\n'.format(ip, rtt, ip_conversation_time[ip][1] ))
+        # f2.write('{}\t{}\t{}\t{}\n'.format(ip,rtt * coef_calc(ip_conversation_time[ip][0], rtt), ip_conversation_time[ip][1], rtt ))
+        f2.write('{}\t{}\t{}\n'.format(ip,rtt, ip_conversation_time[ip][1] ))
     f.close()
     f2.close()
 

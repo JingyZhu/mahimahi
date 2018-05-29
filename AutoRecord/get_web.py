@@ -4,7 +4,7 @@ import requests
 
 web_dict = {'google.com': True}
 webs = open('weblist_all', 'r').read().split('\n')
-
+webs = webs[:500]
 random.shuffle(webs)
 
 i = 0

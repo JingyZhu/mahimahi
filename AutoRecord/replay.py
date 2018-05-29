@@ -10,6 +10,7 @@ while web_list[-1] == "":
     del web_list[-1]
 
 mmwebreplay = os.path.join(os.environ['mmpath'], 'usr/bin/mm-webreplay')
+mmlink = os.path.join(os.environ['mmpath'], 'usr/bin/mm-link')
 repo =  os.path.join(os.environ['mmpath'], 'tmp')
 
 i = 0
@@ -21,4 +22,7 @@ for web in web_list:
     url = http + web[0]
     print(str(i) + " replay: " + aurl)
     web = web[0]
-    call([mmwebreplay, os.path.join(repo, web), 'python3', 'chrome.py', url], env=os.environ.copy(), stdout=FNULL, stderr=STDOUT)
+    try:
+        call([mmwebreplay, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url], timeout=30, env=os.environ.copy(), stdout=FNULL, stderr=STDOUT)
+    except:
+        pass
