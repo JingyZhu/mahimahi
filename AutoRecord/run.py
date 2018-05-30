@@ -17,5 +17,5 @@ for web in webs:
 
 for i in range(4):
     print('Round: ' + str(i))
-    call(['python3', 'record.py'])
-    call(['python3', 'replay.py'])
+    call(['python3', 'record_all.py'])
+    call(['python3', 'replay_all.py'])
