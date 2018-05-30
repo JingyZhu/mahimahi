@@ -75,8 +75,8 @@ def main():
     # for ip in ip_map:
     #     rtt = ping(ip)
     #     ping_map[ip] = rtt
-    f = open(os.path.join(os.environ['PWD'], 'RTT', os.path.dirname(sys.argv[1]).split('/')[-1]) , 'w+')
-    f2 = open(os.path.join(os.path.dirname(sys.argv[1]), 'traffic.txt'), 'w+')
+    f = open(os.path.join(os.environ['PWD'], 'RTT', sys.argv[1].split('/')[-1]) , 'w+')
+    f2 = open(os.path.join(sys.argv[1], 'traffic.txt'), 'w+')
     for ip, times in ip_map.items():
         if len(times) < 2:
             continue

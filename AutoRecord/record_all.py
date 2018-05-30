@@ -1,6 +1,7 @@
 from subprocess import *
 import os
 import sys
+import shutil
 
 http = 'http://www.'
 https = 'https://www.'
@@ -26,7 +27,8 @@ for web in web_list:
     web = web[0]
     # call(['rm', '-rf', os.path.join(repo, web)])
     try:
-        call([mmwebrecord, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url, 'record'], timeout=30, env=os.environ.copy(), stdout=FNULL, stderr=STDOUT)
+        call([mmwebrecord, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url, 'record'], timeout=30, env=os.environ.copy(), stdout=FNULL, stderr=STDOUT )
+        shutil.copyfile('tmp', os.path.join(repo, web, 'ttfb.txt'))
         call(['python3', 'parse.py', os.path.join(repo, web)])
     except Exception as e:
         print("Something wrong with recording {}: {}".format(web, str(e)) )
