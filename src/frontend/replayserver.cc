@@ -164,7 +164,7 @@ int main( void )
 
         //if (duration) delay(duration);
         if ( best_score > 0 ) { /* give client the best match */
-            delay(int(find_delays(host, recording_directory, uri)));
+            delay(int(find_delays(host, recording_directory, strip_query(uri))));
             cout << HTTPResponse( best_match.response() ).str();
             return EXIT_SUCCESS;
         } else {                /* no acceptable matches for request */
