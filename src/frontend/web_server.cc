@@ -13,7 +13,7 @@
 
 using namespace std;
 
-WebServer::WebServer( const Address & addr, const string & working_directory, const string & record_path, const int& delays)
+WebServer::WebServer( const Address & addr, const string & working_directory, const string & record_path)
     : config_file_( "/tmp/replayshell_apache_config" ),
       moved_away_( false )
 {
@@ -21,7 +21,6 @@ WebServer::WebServer( const Address & addr, const string & working_directory, co
 
     config_file_.write( "WorkingDir " + working_directory + "\n" );
     config_file_.write( "RecordingDir " + record_path + "\n" );
-    config_file_.write( "DelaysTime " + to_string(delays) + "\n" );
 
     /* if port 443, add ssl components */
     if ( addr.port() == 443 ) { /* ssl */

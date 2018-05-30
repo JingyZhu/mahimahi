@@ -1,5 +1,8 @@
 /* -*-mode:c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 #include "timestamp.hh"
+#include <fstream>
+#include <unordered_map>
+#include <sstream>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -102,6 +105,26 @@ unsigned int match_score( const MahimahiProtobufs::RequestResponse & saved_recor
     return max_match;
 }
 
+static float find_delays(const string &host, const string &recording_dir, const string &uri)
+{
+    float delay = 0;
+    ifstream in(recording_dir + "/" + host);
+    if (in.is_open()){
+        string line;
+        string curr_uri;
+        float tmp_delay;
+        while(getline(in, line)){
+            istringstream is(line);
+            is >> curr_uri >> tmp_delay;
+            if (curr_uri == uri) {
+                delay = tmp_delay;
+                break;
+            }
+        }
+    }
+    return delay;
+}
+
 int main( void )
 {
     try {
@@ -114,11 +137,11 @@ int main( void )
             + " " + safe_getenv( "REQUEST_URI" )
             + " " + safe_getenv( "SERVER_PROTOCOL" );
         const bool is_https = getenv( "HTTPS" );
-
+        const string host = safe_getenv( "HTTP_HOST" );
+        const string uri = safe_getenv( "REQUEST_URI" );
         SystemCall( "chdir", chdir( working_directory.c_str() ) );
 
         const vector< string > files = list_directory_contents( recording_directory );
-
         unsigned int best_score = 0;
         MahimahiProtobufs::RequestResponse best_match;
 
@@ -141,6 +164,7 @@ int main( void )
 
         //if (duration) delay(duration);
         if ( best_score > 0 ) { /* give client the best match */
+            delay(int(find_delays(host, recording_directory, uri)));
             cout << HTTPResponse( best_match.response() ).str();
             return EXIT_SUCCESS;
         } else {                /* no acceptable matches for request */

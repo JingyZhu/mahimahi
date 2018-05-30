@@ -145,10 +145,9 @@ int main( int argc, char *argv[] )
         }
 
         /* set up web servers */
-	size_t coefficient = 1; // max(1, 10 - int(ip_delays.size()) / 5 );
         vector< WebServer > servers;
         for ( const auto ip_port : unique_ip_and_port ) {
-            servers.emplace_back( ip_port, working_directory, directory, coefficient * ip_delays[ip_port.ip()]);
+            servers.emplace_back( ip_port, working_directory, directory);
             // cout << "Delay of " << ip_port.ip() << "is: " << ip_delays[ip_port.ip()] << endl;
         }
 
