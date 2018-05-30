@@ -5,13 +5,17 @@ from ipaddress import ip_address
 import subprocess
 from subprocess import Popen
 from math import ceil
+from urllib.parse import urlparse
 
-pkts = rdpcap(sys.argv[1])
+repo = sys.argv[1]
+pkts = rdpcap(os.path.join(repo, 'traffic.pcap'))
+ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').read().split('\n')
 ip_map = {} # ip: [S, SA]
+host_map = {} # host: {url: delay}
 ping_map = {}
 ip_conversation_time = {}
-max_step = 0.3
-step = 0.015
+max_step = 0.4
+step = 0.025
 base = 1 - max_step - step
 
 def sec_to_datetime(sec):
@@ -29,7 +33,7 @@ def parse_pkt(pkt):
     return (flags, time, src, dst)
 
 def is_private(address):
-    return address == '172.31.3.103'
+    return address == '10.0.2.15'
     # return address.split('.')[0] == '10' and address.split('.')[1] == '0'
 
 def ping(ip):
@@ -53,10 +57,12 @@ def min(a, b):
     return a
 
 def coef_calc(times, rtt):
-    return max(1 , times / max(1, ceil(rtt/0.05)))
+    return (times + max(1 , times / max(1, ceil(rtt/0.05)))) / 2
 
 def main():
     for pkt in pkts:
+        if pkt is None:
+            continue
         flag, time, src, dst = parse_pkt(pkt)
         if is_private(src) and dst not in ip_map:  # SYN msg
             ip_map[dst] = [time]
@@ -75,12 +81,26 @@ def main():
         if len(times) < 2:
             continue
         rtt = times[1] - times[0]
-        # f.write('{}\t{}\t{}\t{}\n'.format(ip, rtt * coef_calc(ip_conversation_time[ip][0], rtt), ip_conversation_time[ip][1], rtt ))
-        f.write('{}\t{}\t{}\n'.format(ip, rtt, ip_conversation_time[ip][1] ))
-        # f2.write('{}\t{}\t{}\t{}\n'.format(ip,rtt * coef_calc(ip_conversation_time[ip][0], rtt), ip_conversation_time[ip][1], rtt ))
-        f2.write('{}\t{}\t{}\n'.format(ip,rtt, ip_conversation_time[ip][1] ))
+        f.write('{}\t{}\t{}\n'.format(ip, rtt, ip_conversation_time[ip][1]))
+        f2.write('{}\t{}\t{}\n'.format(ip, rtt, ip_conversation_time[ip][1], rtt ))
     f.close()
     f2.close()
+    while ttfb[-1] == '':
+        del ttfb[-1]
+    for t in ttfb:
+        parse_result = urlparse(t.split('\t')[0])
+        host = parse_result.netloc
+        uri = parse_result.path
+        if host not in host_map:
+            host_map[host] = {}
+        host_map[host][uri] = t.split('\t')[1]
+    for host, uri_delay in host_map.items():
+        f = open(os.path.join(repo, host), 'w+')
+        for uri, delay in uri_delay.items():
+            f.write('{}\t{}\n'.format(uri, delay))
+        f.close()
+
+
 
 if __name__ == '__main__':
     main()
