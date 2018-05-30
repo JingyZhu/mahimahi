@@ -20,9 +20,9 @@ for web in web_list:
     web = web.split(',')
     i += 1
     sys.stdout.flush()
-    aurl = https + web[0] if bool(web[1]) else http + web[0]
-    url = http + web[0]
-    print(str(i) + " record: " + aurl)
+    url = https + web[0] if bool(web[1]) else http + web[0]
+    # url = http + web[0]
+    print(str(i) + " record: " + url)
     web = web[0]
     # call(['rm', '-rf', os.path.join(repo, web)])
     try:

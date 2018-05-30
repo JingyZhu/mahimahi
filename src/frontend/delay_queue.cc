@@ -29,7 +29,7 @@ void DelayQueue::read_packet( const string & contents )
         // on downlink is client ip (note that this shouldn't matter)
         RTT_delay = (it->second);
     }
-    packet_queue_.emplace( timestamp() + delay_ms_ + int(RTT_delay), contents );
+    packet_queue_.emplace( timestamp() + delay_ms_ + int(RTT_delay/2), contents );
 }
 
 void DelayQueue::write_packets( FileDescriptor & fd )
