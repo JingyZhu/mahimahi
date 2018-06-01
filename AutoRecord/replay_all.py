@@ -23,6 +23,6 @@ for web in web_list:
     print(str(i) + " replay: " + aurl)
     web = web[0]
     try:
-        call([mmwebreplay, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url], timeout=30, env=os.environ.copy(), stdout=FNULL, stderr=STDOUT)
+        call([mmwebreplay, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url], timeout=60, env=os.environ.copy(), stdout=FNULL, stderr=STDOUT)
     except:
         pass

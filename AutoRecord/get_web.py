@@ -4,7 +4,7 @@ import requests
 
 web_dict = {'google.com': True}
 webs = open('weblist_all', 'r').read().split('\n')
-webs = webs[:500]
+webs = webs[:1000]
 random.shuffle(webs)
 
 i = 0
@@ -16,7 +16,7 @@ for web in webs:
         continue
     web_dict[web[1]] = bool(web[2])
     i += 1
-    if i >=15:
+    if i >=120:
         break
 
 weblist = open('weblist', 'w+')

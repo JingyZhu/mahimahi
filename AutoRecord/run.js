@@ -13,7 +13,7 @@ CDP((client) => {
     if (process.argv[3] == "true"){
         Network.responseReceived ((params) => {
             if (params.response.timing != null){
-                console.log(`${params.response.url}\t${params.response.timing.receiveHeadersEnd - params.response.timing.sendEnd}`);
+                console.log(`${params.response.url}\t${params.response.timing.dnsEnd - params.response.timing.dnsStart + params.response.timing.receiveHeadersEnd - params.response.timing.sendEnd}`);
             }
         });
     } else {

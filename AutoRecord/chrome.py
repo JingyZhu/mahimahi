@@ -44,7 +44,8 @@ else:
     call(['node', 'run.js', web, 'false'])
 end = time.time()
 
-filter('tmp', end-begin)
+if record:
+    filter('tmp', end-begin)
 
 stage = 'record' if record else 'replay'
 lastslash = web.rfind('/')

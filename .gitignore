@@ -48,3 +48,5 @@ node_modules
 */plTime/*
 AutoRecord/sort.py
 AutoRecord/trace_file
+AutoRecord/*log
+AutoRecord/tmp
