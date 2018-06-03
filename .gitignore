@@ -46,7 +46,6 @@ node_modules
 .vscode
 */RTT/*
 */plTime/*
-AutoRecord/sort.py
-AutoRecord/trace_file
-AutoRecord/*log
-AutoRecord/tmp
+PyScript/trace_file
+Pyscript/*log
+Pyscript/tmp
