@@ -14,9 +14,9 @@ for web in webs:
     sre = re.search('google.', web[1])
     if sre is not None and sre.start() == 0:
         continue
-    web_dict[web[1]] = (web[2] == "True")
+    web_dict[web[1]] = (web[2] == 'True')
     i += 1
-    if i >=110:
+    if i >=10:
         break
 
 weblist = open('weblist', 'w+')

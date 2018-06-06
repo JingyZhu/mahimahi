@@ -2,7 +2,6 @@ from subprocess import *
 import os
 
 # call(['python3', 'get_web.py'])
-epoch = 3
 
 webf = open('weblist', 'r')
 webs = webf.read().split('\n')
@@ -18,5 +17,5 @@ for web in webs:
     f2 = open(os.path.join('counts', web), 'w+')
     f2.close()
 
-for i in range(epoch):
+for i in range(1):
     call(['python3', 'record.py'])

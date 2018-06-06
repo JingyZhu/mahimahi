@@ -1,9 +1,12 @@
 import sys
 import os
+from urllib.parse import urlparse
 
 total = 0
 cachable = 0
 cached = {}
+http = {}
+httpcachable = 0
 
 web = sys.argv[1]
 tmp = os.path.join('tmp', web)
@@ -14,18 +17,21 @@ while rfile[-1] == '':
 
 for line in rfile:
     line = line.split('\t')
-    if line[0] == '3':
+    if line[0] == '1':
+        scheme = urlparse(line[2]).scheme
+        if scheme == 'http':
+            http[line[1]] = 0
+    elif line[0] == '2':
+        cached[line[1]] = 0
+    elif line[0] == '3':
         total += int(line[2])
         if line[1] in cached:
             cachable += int(line[2])
-    elif line[0] == '2':
-        cached[line[1]] = 0
+            if line[1] in http:
+                httpcachable += int(line[2])
 
 byte = os.path.join('bytes', web)
 bfile = open(byte, 'a')
 
-if total != 0: 
-    bfile.write(str( cachable / total ) + "\n")
-else:
-    bfile.write("The page didn't load!: {}\n".format(web))
+bfile.write('all: {}\nhttp: {}\n'.format(str( cachable / total ), str(httpcachable / total) ))
 bfile.close()
