@@ -13,7 +13,8 @@ CDP((client) => {
     if (process.argv[3] == "true"){
         Network.responseReceived ((params) => {
             console.log(`1\t${params.requestId}\t${params.response.url}`);
-            const cacheControl = params.response.headers['cache-control'];
+            const cacheControl = params.response.headers['Cache-Control'];
+            // console.log(`*\t${params.response.headersText}`);
             if (cacheControl != null) {
                 const private = cacheControl.indexOf("private");
                 const maxage = cacheControl.indexOf("max-age=");

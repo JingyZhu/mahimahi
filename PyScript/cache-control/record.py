@@ -16,14 +16,14 @@ for web in web_list:
     web = web.split(',')
     i += 1
     sys.stdout.flush()
-    url = https + web[0] if bool(web[1]) else http + web[0]
+    url = https + web[0] if web[1] == 'True' else http + web[0]
     print(str(i) + ". " + url)
     web = web[0]
     # call(['rm', '-rf', os.path.join(repo, web)])
     try:
         filename = os.path.join('tmp', web)
         webfile = open(filename, 'w+')
-        call(['python3', 'chrome.py', url, 'record'], timeout=60, env=os.environ.copy(), stdout=webfile, stderr=FNULL)
+        call(['python3', 'chrome.py', url, 'record'], timeout=120, env=os.environ.copy(), stdout=webfile, stderr=FNULL)
         call(['python3', 'bytes.py', web])
         call(['python3', 'count.py', web])
         webfile.close()

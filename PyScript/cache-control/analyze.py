@@ -24,7 +24,7 @@ def parse_portion(filename):
         try:
             datus = datus.split(' ')
             if datus[0] == 'all:':
-                frac.append(float(datus[1))
+                frac.append(float(datus[1]))
             elif datus[0] == 'http:':
                 http.append(float(datus[1]))
         except Exception as e:
