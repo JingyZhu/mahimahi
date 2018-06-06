@@ -24,6 +24,10 @@ for line in rfile:
 counts = os.path.join('counts', web)
 cfile = open(counts, 'a')
 
-cfile.write(str( cachable / total ) + "\n")
+if total != 0:
+    cfile.write(str( cachable / total ) + "\n")
+else:
+    cfile.write("The page didn't load!: {}\n".format(web))
+
 cfile.close()
 # print('cachable: {}\ntotal: {}\nfraction: {}%'.format(cachable, total, cachable / total * 100))

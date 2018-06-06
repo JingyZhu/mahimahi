@@ -24,5 +24,8 @@ for line in rfile:
 byte = os.path.join('bytes', web)
 bfile = open(byte, 'a')
 
-bfile.write(str( cachable / total ) + "\n")
+if total != 0: 
+    bfile.write(str( cachable / total ) + "\n")
+else:
+    bfile.write("The page didn't load!: {}\n".format(web))
 bfile.close()

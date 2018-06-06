@@ -15,6 +15,7 @@ CDP((client) => {
             console.log(`1\t${params.requestId}\t${params.response.url}`);
             const cacheControl = params.response.headers['cache-control'];
             if (cacheControl != null) {
+                // console.log(cacheControl);
                 const private = cacheControl.indexOf("private");
                 const maxage = cacheControl.indexOf("max-age=");
                 let bdigit = 0;
