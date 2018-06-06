@@ -32,7 +32,7 @@ for line in rfile:
 
 counts = os.path.join('counts', web)
 cfile = open(counts, 'a')
-
-cfile.write('all: {}\nhttp: {}\n'.format(str( cachable / total ), str(httpcachable / total) ))
+if total != 0:
+    cfile.write('all: {}\nhttp: {}\n'.format(str( cachable / total ), str(httpcachable / total) ))
 cfile.close()
 # print('cachable: {}\ntotal: {}\nfraction: {}%'.format(cachable, total, cachable / total * 100))

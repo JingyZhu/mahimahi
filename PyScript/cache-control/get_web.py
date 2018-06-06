@@ -7,7 +7,7 @@ webs = open('weblist_all', 'r').read().split('\n')
 webs = webs[:1000]
 random.shuffle(webs)
 
-i = 0
+i = 1
 
 for web in webs:
     web = web.split(',')
@@ -16,7 +16,7 @@ for web in webs:
         continue
     web_dict[web[1]] = (web[2] == 'True')
     i += 1
-    if i >=10:
+    if i >= 100:
         break
 
 weblist = open('weblist', 'w+')

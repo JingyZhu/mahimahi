@@ -32,6 +32,6 @@ for line in rfile:
 
 byte = os.path.join('bytes', web)
 bfile = open(byte, 'a')
-
-bfile.write('all: {}\nhttp: {}\n'.format(str( cachable / total ), str(httpcachable / total) ))
+if total != 0:
+    bfile.write('all: {}\nhttp: {}\n'.format(str( cachable / total ), str(httpcachable / total) ))
 bfile.close()
