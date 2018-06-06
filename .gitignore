@@ -44,8 +44,10 @@ Makefile.in
 env
 node_modules
 .vscode
-*/RTT/*
-*/plTime/*
+*/RTT/
+*/plTime/
 PyScript/trace_file
-Pyscript/*log
-Pyscript/tmp
+*/log
+*/tmp/
+*/bytes/
+*/counts/
