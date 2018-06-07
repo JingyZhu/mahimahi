@@ -23,7 +23,7 @@ for line in rfile:
             http[line[1]] = 0
     elif line[0] == '2':
         cached[line[1]] = 0
-    elif line[0] == '3':
+    elif line[0] == '3' and int(line[2]) != 0:
         total += 1
         if line[1] in cached:
             cachable += 1

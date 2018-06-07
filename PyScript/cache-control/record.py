@@ -2,8 +2,8 @@ from subprocess import *
 import os
 import sys
 
-http = 'http://www.'
-https = 'https://www.'
+http = 'http://'
+https = 'https://'
 
 FNULL = open(os.devnull, 'w')
 
@@ -23,7 +23,7 @@ for web in web_list:
     try:
         filename = os.path.join('tmp', web)
         webfile = open(filename, 'w+')
-        call(['python3', 'chrome.py', url, 'record'], timeout=120, env=os.environ.copy(), stdout=webfile, stderr=FNULL)
+        call(['python3', 'chrome.py', url, 'record'], timeout=60, env=os.environ.copy(), stdout=webfile, stderr=FNULL)
         call(['python3', 'bytes.py', web])
         call(['python3', 'count.py', web])
         webfile.close()
