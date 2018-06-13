@@ -71,23 +71,24 @@ chttp.sort()
 
 i = 1
 for bfrac in bfracs:
-    bstr += '[{}, {}, null],'.format( bfrac, i / len(bfracs) )
+    bstr += '[{}, {}, null],\n'.format( bfrac, i / len(bfracs) )
     i += 1
 
 i = 1
 for bh in bhttp:
-    bstr += '[{}, null, {}],'.format( bh, i / len(bhttp) )
+    bstr += '[{}, null, {}],\n'.format( bh, i / len(bhttp) )
     i += 1
 
 i = 1
 for cfrac in cfracs:
-    cstr += '[{}, {}, null],'.format( cfrac, i / len(cfracs) )
+    cstr += '[{}, {}, null],\n'.format( cfrac, i / len(cfracs) )
     i += 1
 
 i = 1
 for ch in chttp:
-    cstr += '[{}, null, {}],'.format( ch, i / len(chttp) )
+    cstr += '[{}, null, {}],\n'.format( ch, i / len(chttp) )
     i += 1
 
 print(bstr)
+print('\n\n\n')
 print(cstr)

@@ -7,6 +7,7 @@
 .deps
 Makefile
 Makefile.in
+weblist
 
 /INSTALL
 /aclocal.m4
@@ -44,10 +45,13 @@ Makefile.in
 env
 node_modules
 .vscode
-*/RTT/
-*/plTime/
+RTT
+plTime
 PyScript/trace_file
-*/log
-*/tmp/
-*/bytes/
-*/counts/
+log
+tmp/
+bytes/
+counts/
+httpBytes/
+httpCounts/
+weblist
