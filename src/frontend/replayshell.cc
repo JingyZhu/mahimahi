@@ -29,8 +29,6 @@
 
 using namespace std;
 
-const unsigned cnn_num=88;
-
 void add_dummy_interface( const string & name, const Address & addr )
 {
     run( { IP, "link", "add", name, "type", "dummy" } );
