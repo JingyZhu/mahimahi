@@ -2,8 +2,8 @@ from subprocess import *
 import os
 import sys
 
-http = 'http://www.'
-https = 'https://www.'
+http = 'http://'
+https = 'https://'
 FNULL=open(os.devnull, 'w')
 web_list = open('weblist', 'r').read().split('\n')
 while web_list[-1] == "":

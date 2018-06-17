@@ -1,3 +1,7 @@
+"""
+    Read traffic.pcap and analyze RTT for each ip address
+    Read ttfb.txt (redirected by run.js)  and analyze ttfb for each hosts and uris.
+"""
 from scapy.all import *
 import sys
 import os
@@ -9,14 +13,10 @@ from urllib.parse import urlparse
 
 repo = sys.argv[1]
 pkts = rdpcap(os.path.join(repo, 'traffic.pcap'))
-ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').read().split('\n')
+ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').readlines()
 ip_map = {} # ip: [S, SA]
 host_map = {} # host: {url: delay}
 ping_map = {}
-ip_conversation_time = {}
-max_step = 0.4
-step = 0.025
-base = 1 - max_step - step
 
 def sec_to_datetime(sec):
     _, sec = divmod(sec, 24 * 3600)
@@ -33,7 +33,7 @@ def parse_pkt(pkt):
     return (flags, time, src, dst)
 
 def is_private(address):
-    return address == '172.31.3.103'
+    return address == '10.0.2.15'# '172.31.3.103'
     # return address.split('.')[0] == '10' and address.split('.')[1] == '0'
 
 def ping(ip):
@@ -56,8 +56,6 @@ def min(a, b):
         return b
     return a
 
-def coef_calc(times, rtt):
-    return (times + max(1 , times / max(1, ceil(rtt/0.05)))) / 2
 
 def main():
     for pkt in pkts:
@@ -66,12 +64,8 @@ def main():
         flag, time, src, dst = parse_pkt(pkt)
         if is_private(src) and dst not in ip_map:  # SYN msg
             ip_map[dst] = [time]
-            ip_conversation_time[dst] = [base, 1]
-        elif is_private(dst) and src in ip_map and len(ip_map[src]) == 1:
+        elif is_private(dst) and src in ip_map and len(ip_map[src]) == 1:  # SA msg
             ip_map[src].append(time)
-        if dst in ip_conversation_time and flag == 'S':
-            ip_conversation_time[dst][0] += max(0, (1 - base + step) - step * ip_conversation_time[dst][1])
-            ip_conversation_time[dst][1] += 1
     # for ip in ip_map:
     #     rtt = ping(ip)
     #     ping_map[ip] = rtt
@@ -81,8 +75,8 @@ def main():
         if len(times) < 2:
             continue
         rtt = times[1] - times[0]
-        f.write('{}\t{}\t{}\n'.format(ip, rtt, ip_conversation_time[ip][1]))
-        f2.write('{}\t{}\t{}\n'.format(ip, rtt, ip_conversation_time[ip][1], rtt ))
+        f.write('{}\t{}\n'.format(ip, rtt))
+        f2.write('{}\t{}\n'.format(ip, rtt))
     f.close()
     f2.close()
     while ttfb[-1] == '':

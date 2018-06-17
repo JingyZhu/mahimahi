@@ -23,6 +23,8 @@
 
 using namespace std;
 
+string log = "";
+
 string safe_getenv( const string & key )
 {
     const char * const value = getenv( key.c_str() );
@@ -64,7 +66,7 @@ string strip_query( const string & request_line )
 }
 
 /* compare request_line and certain headers of incoming request and stored request */
-unsigned int match_score( const MahimahiProtobufs::RequestResponse & saved_record,
+unsigned match_score( const MahimahiProtobufs::RequestResponse & saved_record,
                           const string & request_line,
                           const bool is_https )
 {
@@ -91,6 +93,7 @@ unsigned int match_score( const MahimahiProtobufs::RequestResponse & saved_recor
 
     /* must match first line up to "?" at least */
     if ( strip_query( request_line ) != strip_query( saved_request.first_line() ) ) {
+        log += strip_query( request_line ) + "vs. " + strip_query( saved_request.first_line() ) + " | ";
         return 0;
     }
 
@@ -155,7 +158,7 @@ int main( void )
                 throw runtime_error( filename + ": invalid HTTP request/response" );
             }
 
-            unsigned int score = match_score( current_record, request_line, is_https );
+            unsigned score = match_score( current_record, request_line, is_https );
             if ( score > best_score ) {
                 best_match = current_record;
                 best_score = score;
@@ -169,7 +172,8 @@ int main( void )
             return EXIT_SUCCESS;
         } else {                /* no acceptable matches for request */
             cout << "HTTP/1.1 404 Not Found" << CRLF;
-            cout << "Content-Type: text/plain" << CRLF << CRLF;
+            cout << "Content-Type: text/plain" << CRLF;
+            cout << "log: "<< log << CRLF;
             cout << "replayserver: could not find a match for " << request_line <<CRLF;
             return EXIT_FAILURE;
         }

@@ -95,6 +95,7 @@ int main( int argc, char *argv[] )
         set< Address > unique_ip_and_port;
         vector< pair< string, Address > > hostname_to_ip;
         unordered_map<string, float> ip_delays;
+        unordered_map<string, string> ip_to_hostname;
 
         {
             ifstream in(directory + "traffic.txt");
@@ -132,6 +133,7 @@ int main( int argc, char *argv[] )
 
                 hostname_to_ip.emplace_back( HTTPRequest( protobuf.request() ).get_header_value( "Host" ),
                                              address );
+                ip_to_hostname[address.ip()] = HTTPRequest( protobuf.request() ).get_header_value( "Host" );
             }
         }
 
@@ -146,6 +148,7 @@ int main( int argc, char *argv[] )
         vector< WebServer > servers;
         for ( const auto ip_port : unique_ip_and_port ) {
             servers.emplace_back( ip_port, working_directory, directory);
+            cout << ip_port.ip() << ": " << ip_to_hostname[ip_port.ip()] << endl;
             // cout << "Delay of " << ip_port.ip() << "is: " << ip_delays[ip_port.ip()] << endl;
         }
 

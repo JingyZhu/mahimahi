@@ -46,10 +46,11 @@ env
 node_modules
 .vscode
 RTT
+__pycache__
 plTime
 PyScript/trace_file
 log
-tmp/
+tmp
 bytes/
 counts/
 httpBytes/

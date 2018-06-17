@@ -3,8 +3,8 @@ import os
 import sys
 import shutil
 
-http = 'http://www.'
-https = 'https://www.'
+http = 'http://'
+https = 'https://'
 #call(['python3', 'get_web.py'])
 FNULL = open(os.devnull, 'w')
 web_list = open('weblist', 'r').read().split('\n')
