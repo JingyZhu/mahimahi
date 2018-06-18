@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 repo = sys.argv[1]
 pkts = rdpcap(os.path.join(repo, 'traffic.pcap'))
-ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').readlines()
+# ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').readlines()
 ip_map = {} # ip: [S, SA]
 host_map = {} # host: {url: delay}
 ping_map = {}
@@ -66,10 +66,8 @@ def main():
             ip_map[dst] = [time]
         elif is_private(dst) and src in ip_map and len(ip_map[src]) == 1:  # SA msg
             ip_map[src].append(time)
-    # for ip in ip_map:
-    #     rtt = ping(ip)
-    #     ping_map[ip] = rtt
-    f = open(os.path.join(os.environ['PWD'], 'RTT', sys.argv[1].split('/')[-1]) , 'w+')
+
+    f = open(os.path.join(os.environ['PWD'], 'RTT', os.path.basename(repo)) , 'w+')
     f2 = open(os.path.join(sys.argv[1], 'traffic.txt'), 'w+')
     for ip, times in ip_map.items():
         if len(times) < 2:
@@ -79,20 +77,6 @@ def main():
         f2.write('{}\t{}\n'.format(ip, rtt))
     f.close()
     f2.close()
-    while ttfb[-1] == '':
-        del ttfb[-1]
-    for t in ttfb:
-        parse_result = urlparse(t.split('\t')[0])
-        host = parse_result.netloc
-        uri = parse_result.path
-        if host not in host_map:
-            host_map[host] = {}
-        host_map[host][uri] = t.split('\t')[1]
-    for host, uri_delay in host_map.items():
-        f = open(os.path.join(repo, host), 'w+')
-        for uri, delay in uri_delay.items():
-            f.write('{}\t{}\n'.format(uri, delay))
-        f.close()
 
 
 

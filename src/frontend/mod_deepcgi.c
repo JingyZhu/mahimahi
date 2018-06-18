@@ -16,6 +16,7 @@ static int deepcgi_handler( request_rec* inpRequest );
 typedef struct {
     const char* working_dir;
     const char* recording_dir;
+    const char* rtt_delay;
 } deepcgi_config;
 
 static deepcgi_config config;
@@ -34,6 +35,11 @@ const char* deepcgi_set_recordingdir(cmd_parms* cmd, void* cfg, const char* arg)
     return NULL;
 }
 
+const char* deepcgi_set_rttdelay(cmd_parms* cmd, void* cfg, const char* arg) {
+    config.rtt_delay = arg;
+    return NULL;
+}
+
 
 // ============================================================================
 // Directives to read configuration parameters
@@ -43,6 +49,7 @@ static const command_rec deepcgi_directives[] =
 {
     AP_INIT_TAKE1( "workingDir", deepcgi_set_workingdir, NULL, RSRC_CONF, "Working directory" ),
     AP_INIT_TAKE1( "recordingDir", deepcgi_set_recordingdir, NULL, RSRC_CONF, "Recording directory" ),
+    AP_INIT_TAKE1( "rttDelay", deepcgi_set_rttdelay, NULL, RSRC_CONF, "Rtt delays" ),
     { NULL }
 };
 
@@ -86,6 +93,7 @@ int deepcgi_handler( request_rec* inpRequest )
     setenv( "REQUEST_URI", request_uri, TRUE );
     setenv( "SERVER_PROTOCOL", protocol, TRUE );
     setenv( "HTTP_HOST", http_host, TRUE );
+    setenv( "RTT_DELAY", config.rtt_delay, TRUE );
     if ( user_agent != NULL ) {
         setenv( "HTTP_USER_AGENT", user_agent, TRUE );
     }

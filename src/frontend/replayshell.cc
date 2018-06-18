@@ -147,7 +147,7 @@ int main( int argc, char *argv[] )
         /* set up web servers */
         vector< WebServer > servers;
         for ( const auto ip_port : unique_ip_and_port ) {
-            servers.emplace_back( ip_port, working_directory, directory);
+            servers.emplace_back( ip_port, working_directory, directory, unsigned(ip_delays[ip_port.ip()]) );
             cout << ip_port.ip() << ": " << ip_to_hostname[ip_port.ip()] << endl;
             // cout << "Delay of " << ip_port.ip() << "is: " << ip_delays[ip_port.ip()] << endl;
         }

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <sstream>
+#include <algorithm>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -23,7 +24,6 @@
 
 using namespace std;
 
-string log = "";
 
 string safe_getenv( const string & key )
 {
@@ -93,7 +93,6 @@ unsigned match_score( const MahimahiProtobufs::RequestResponse & saved_record,
 
     /* must match first line up to "?" at least */
     if ( strip_query( request_line ) != strip_query( saved_request.first_line() ) ) {
-        log += strip_query( request_line ) + "vs. " + strip_query( saved_request.first_line() ) + " | ";
         return 0;
     }
 
@@ -142,6 +141,7 @@ int main( void )
         const bool is_https = getenv( "HTTPS" );
         const string host = safe_getenv( "HTTP_HOST" );
         const string uri = safe_getenv( "REQUEST_URI" );
+        const unsigned rtt_delay = stoi(safe_getenv("RTT_DELAY"));
         SystemCall( "chdir", chdir( working_directory.c_str() ) );
 
         const vector< string > files = list_directory_contents( recording_directory );
@@ -167,13 +167,12 @@ int main( void )
 
         //if (duration) delay(duration);
         if ( best_score > 0 ) { /* give client the best match */
-            delay(int(find_delays(host, recording_directory, strip_query(uri))));
+            delay(max(0, int(find_delays(host, recording_directory, strip_query(uri))) - int(rtt_delay)) );
             cout << HTTPResponse( best_match.response() ).str();
             return EXIT_SUCCESS;
         } else {                /* no acceptable matches for request */
             cout << "HTTP/1.1 404 Not Found" << CRLF;
-            cout << "Content-Type: text/plain" << CRLF;
-            cout << "log: "<< log << CRLF;
+            cout << "Content-Type: text/plain" << CRLF << CRLF;
             cout << "replayserver: could not find a match for " << request_line <<CRLF;
             return EXIT_FAILURE;
         }

@@ -5,6 +5,7 @@ import sys
 from queue import Queue
 import os
 import time
+from urllib.parse import urlparse
 
 web = sys.argv[1]
 
@@ -48,8 +49,7 @@ if record:
     filter('tmp', end-begin)
 
 stage = 'record' if record else 'replay'
-lastslash = web.rfind('/')
-time_collection = open(os.path.join('plTime', web[lastslash+5:]), 'a')
+time_collection = open(os.path.join('plTime', urlparse(web).netloc), 'a')
 time_collection.write("{}\t{}\n".format(stage, str(end-begin)))
 time_collection.close()
 
