@@ -13,7 +13,7 @@ from urllib.parse import *
 
 ip_delays = {} # Used for cache-latency
 proxy_delay = 0.01
-repo = join(os.environ['mmpath'], 'tmp', sys.argv[1])
+repo = join(os.environ['mmpath'], 'tmp', sys.argv[1]) if sys.argv[1] != '' else join(os.environ['mmpath'], 'tmp', 'ftp')
 save_list = os.listdir(repo)
 save_list = list (filter(lambda x: x[:5] == 'save.', save_list))
 ips = {}
@@ -130,7 +130,7 @@ def main():
         ip_delays[origin.ip] = proxy_delay if cacheable else ip_delays[response.ip]
 
         # Update hosts ttfb
-        uri = response.request.first_line.decode('utf-8').split(' ')[1]
+        uri = urlparse(response.request.first_line.decode('utf-8').split(' ')[1]).path
         if new_host not in url_ttfb:
             url_ttfb[new_host] = {}
         if host in url_ttfb and uri in url_ttfb[host]:

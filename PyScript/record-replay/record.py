@@ -11,7 +11,7 @@ mmlink = os.path.join(os.environ['mmpath'], 'usr/bin/mm-link')
 repo =  os.path.join(os.environ['mmpath'], 'tmp')
 url = sys.argv[1]
 
-web = urlparse(url).netloc
+web = urlparse(url).netloc if urlparse(url).netloc!='' else 'ftp'
 
 try:
     call([mmwebrecord, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url, 'record'], timeout=60, env=os.environ.copy())

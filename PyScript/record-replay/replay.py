@@ -4,7 +4,7 @@ import sys
 from urllib.parse import urlparse
 
 url = sys.argv[1]
-web = urlparse(url).netloc
+web =  urlparse(url).netloc if urlparse(url).netloc!='' else 'ftp'
 
 mmwebreplay = os.path.join(os.environ['mmpath'], 'usr/bin/mm-webreplay')
 mmlink = os.path.join(os.environ['mmpath'], 'usr/bin/mm-link')

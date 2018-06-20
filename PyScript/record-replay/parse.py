@@ -11,7 +11,7 @@ from subprocess import Popen
 from math import ceil
 from urllib.parse import urlparse
 
-repo = sys.argv[1]
+repo = sys.argv[1] if sys.argv[1] != '' else 'ftp'
 pkts = rdpcap(os.path.join(repo, 'traffic.pcap'))
 # ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').readlines()
 ip_map = {} # ip: [S, SA]
