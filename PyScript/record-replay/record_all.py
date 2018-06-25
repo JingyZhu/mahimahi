@@ -31,5 +31,6 @@ for web in web_list:
         shutil.copyfile('tmp', os.path.join(repo, web, 'ttfb.txt'))
         call(['python3', 'parse.py', os.path.join(repo, web)])
     except Exception as e:
+        call(['pkill', 'chromium'])
         print("Something wrong with recording {}: {}".format(web, str(e)) )
    

@@ -44,7 +44,14 @@ def if_cacheable(headers):
             value = header.value.decode('utf-8')
             max_age = value.find('max-age')
             if max_age != -1 and 'private' not in value:
-                return int(value[max_age + 8]) > 0
+                i = 8
+                while True:
+                    try:
+                        return int(value[max_age + i]) > 0
+                    except:
+                        i += 1
+                        if i >=len(value) + max_age:
+                            return False
             return False
     return False
 
@@ -54,7 +61,11 @@ def get_host(headers):
             return header.value.decode('utf-8')
     return None
 
-    
+def get_header(headers, target):
+    for header in headers:
+        if header.key.lower().decode('utf-8') == target:
+            return header.value.decode('utf-8')
+    return ''
 
 def find_emptyip(ip='0.0.0.0', cacheable=False):
     for i in range(3, -1, -1):
@@ -64,6 +75,22 @@ def find_emptyip(ip='0.0.0.0', cacheable=False):
             if '.'.join(ip_list) not in ips:
                 ips['.'.join(ip_list)] = 1
                 return '.'.join(ip_list)
+
+def option_response(response):
+    option = http_record_pb2.RequestResponse()
+    option.CopyFrom(response)
+    option.response.ClearField('body')
+    line = option.request.first_line.decode('utf-8').split(' ')
+    line = ['OPTIONS', line[1], line[2]]
+    option.request.first_line = ' '.join(line).encode('utf-8')
+    option.response.ClearField('header')
+    option.response.first_line = b'HTTP/1.1 200 OK'
+    header = option.response.header.add()
+    header.CopyFrom(HTTPHeader(b'Allow', b'GET, POST, HEAD, OPTIONS, PUT'))
+    header = option.response.header.add()
+    header.CopyFrom(HTTPHeader(b'Content-Length', b'0'))
+    return option
+
 
 
 def init_ip():
@@ -104,25 +131,55 @@ def main():
         f = open(join(repo, save), 'rb').read() 
         response = http_record_pb2.RequestResponse()
         response.ParseFromString(f)
+
         host = get_host(response.request.header)
+        # print('{}: {}\n{}\n{}\n\n'.format(host, response.ip, response.request.first_line, response.response.first_line))
+        # if response.request.first_line.decode().split(' ')[1].find('async_sso') != -1:
+        #     for header in response.request.header:
+        #         print('{}: {}'.format(header.key, header.value))
+        # continue
         if host is None:
             return
+        
+        if response.request.first_line.decode('utf-8').split(' ')[1] == '/':
+            i = 0
+            while i < len(response.response.header):
+                beginX = response.response.header[i].key.lower().decode('utf-8').find('x-')
+                beginC = response.response.header[i].key.lower().decode('utf-8').find('content-security-policy')
+                beginA = response.response.header[i].key.lower().decode('utf-8').find('credentials')
+                if beginX == 0 or beginC == 0 or beginA != -1:
+                    del response.response.header[i]
+                    i -= 1
+                i += 1
+            newheader = response.response.header.add()
+            newheader.key = b'Access-Control-Allow-Origin'
+            newheader.value = b'*'
+            f0 = open(join(repo, save), 'wb+')
+            f0.write(response.SerializeToString())
+            continue
 
+        # If homepage, only delete the headers
+       
         redirect = http_record_pb2.RequestResponse()
         origin = http_record_pb2.RequestResponse()
+        option = http_record_pb2.RequestResponse()
         redirect.CopyFrom(response)
         origin.CopyFrom(response)
 
-        # Edit first line to 301, Clear others
+
+        # Edit first line to 3017 Clear others
         first_line = redirect.response.first_line.decode('utf-8').split(' ')
-        first_line = [first_line[0], '301', 'Moved Permanently']
+        first_line = [first_line[0], '307', 'Temporary Redirect']
         redirect.response.first_line = ' '.join(first_line).encode('utf-8')
         redirect.response.ClearField('body')
         redirect.response.ClearField('header')
+        newheader = redirect.response.header.add()
+        newheader.key = b'Access-Control-Allow-Origin'
+        newheader.value = b'*'
 
         # determine whether cacheable
         cacheable = if_cacheable(response.response.header) \
-                    and response.scheme == http_record_pb2.RequestResponse.HTTP
+                    and response.scheme == http_record_pb2.RequestResponse.HTTPS
 
         # Setup new host's delay and ip
         new_host = modify_location(host, cacheable)
@@ -142,6 +199,29 @@ def main():
             if origin.request.header[i].key.lower() == b'host':
                 origin.request.header[i].value = new_host.encode('utf-8')
 
+
+        i = 0
+        has_Cors = False
+        while i < len(origin.response.header):
+            beginX = origin.response.header[i].key.lower().decode('utf-8').find('x-content-security')
+            beginC = origin.response.header[i].key.lower().decode('utf-8').find('content-security-policy')
+            beginR = origin.response.header[i].key.lower().decode('utf-8').find('credentials')
+            beginA = origin.response.header[i].key.lower().decode('utf-8').find('access-control-allow-origin')
+            if beginX == 0 or beginC == 0 or beginR != -1:
+                del origin.response.header[i]
+                i -= 1
+            elif beginA == 0:
+                has_Cors = True
+            i += 1
+        # If no CORS settings, do it
+        if not has_Cors:
+            newheader = origin.response.header.add()
+            newheader.key = b'Access-Control-Allow-Origin'
+            newheader.value = b'*'
+
+        # Writet option request and response
+        option.CopyFrom(option_response(origin))
+
         # Set redirection location (full url)
         location = redirect.response.header.add()
         content_length = redirect.response.header.add()
@@ -151,6 +231,7 @@ def main():
         content_length.CopyFrom(HTTPHeader(b'Content-Length', b'0'))
         
         fd2, path2 = tempfile.mkstemp('', 'save.', repo)
+        fd3, path3 = tempfile.mkstemp('', 'save.', repo)
         # print(path1 + '\n' + path2)
         # fd0 = open(join(repo, save.replace('save', 'response')), 'w+')
         # fd1 = open(join(repo, save.replace('save', 'origin')), 'w+')
@@ -158,9 +239,12 @@ def main():
         fd1 = open(join(repo, save), 'wb+')
         fd1.write(redirect.SerializeToString())
         os.write(fd2, origin.SerializeToString())
+        os.write(fd3, option.SerializeToString())
         fd1.close()
         os.close(fd2)
+        os.close(fd3)
         # print((list(response.response.header)[0]))
+    # return
     traffic = open(join(repo, 'traffic.txt'), 'w+')
     for host in hosts_ips:
         ip_delays[hosts_ips[host][0]] = 0

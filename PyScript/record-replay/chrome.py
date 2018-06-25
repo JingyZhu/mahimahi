@@ -17,7 +17,7 @@ FNULL = open('/dev/null', 'w')
 def run_chrome():
     Popen(['chromium-browser', '--remote-debugging-port=9222', '--ignore-certificate-errors', '--user-data-dir=/tmp/nonexistent$(date +%s%N)', '--disk-cache-size=1'], stdout=FNULL, stderr=STDOUT)
     sem.acquire()
-    # call(['pkill', 'chromium'])
+    call(['pkill', 'chromium'])
 
 def filter(temp, delay):
     ttfb = open(temp, 'r').read().split('\n')
@@ -37,12 +37,12 @@ chrome = threading.Thread(target=run_chrome)
 chrome.start()
 
 temp = open('tmp','w+')
-time.sleep(10)
+time.sleep(2)
 begin = time.time()
 if record:
     call(['node', 'run.js', web, 'true'], stdout=temp)
 else:
-    call(['node', 'run.js', web, 'false'])
+    call(['node', 'run.js', web, os.path.join('screenshot', urlparse(web).netloc)])
 end = time.time()
 
 if record:
@@ -54,7 +54,10 @@ time_collection = open(os.path.join('plTime', fuck), 'a')
 time_collection.write("{}\t{}\n".format(stage, str(end-begin)))
 time_collection.close()
 
+time.sleep(1)
+
 if record:
     time.sleep(1)
+
 
 sem.release()

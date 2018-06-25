@@ -24,6 +24,7 @@
 
 using namespace std;
 
+string log = "";
 
 string safe_getenv( const string & key )
 {
@@ -66,7 +67,7 @@ string strip_query( const string & request_line )
 }
 
 /* compare request_line and certain headers of incoming request and stored request */
-unsigned match_score( const MahimahiProtobufs::RequestResponse & saved_record,
+int match_score( const MahimahiProtobufs::RequestResponse & saved_record,
                           const string & request_line,
                           const bool is_https )
 {
@@ -74,28 +75,30 @@ unsigned match_score( const MahimahiProtobufs::RequestResponse & saved_record,
 
     /* match HTTP/HTTPS */
     if ( is_https and (saved_record.scheme() != MahimahiProtobufs::RequestResponse_Scheme_HTTPS) ) {
-        return 0;
+        return -5;
     }
 
     if ( (not is_https) and (saved_record.scheme() != MahimahiProtobufs::RequestResponse_Scheme_HTTP) ) {
-        return 0;
+        return -4;
     }
 
     /* match host header */
     if ( not header_match( "HTTP_HOST", "Host", saved_request ) ) {
-        return 0;
+        return -3;
     }
 
     /* match user agent */
     if ( not header_match( "HTTP_USER_AGENT", "User-Agent", saved_request ) ) {
-        return 0;
+        return -2;
     }
 
     /* must match first line up to "?" at least */
     if ( strip_query( request_line ) != strip_query( saved_request.first_line() ) ) {
-        return 0;
+        log += strip_query( request_line ) + " vs. " + strip_query( saved_request.first_line() ) + " | ";
+        return -1;
     }
 
+    //if (request_line.find("zone-manager") != string::npos) return 0;
     /* success! return size of common prefix */
     const auto max_match = min( request_line.size(), saved_request.first_line().size() );
     for ( unsigned int i = 0; i < max_match; i++ ) {
@@ -145,7 +148,7 @@ int main( void )
         SystemCall( "chdir", chdir( working_directory.c_str() ) );
 
         const vector< string > files = list_directory_contents( recording_directory );
-        unsigned int best_score = 0;
+        int best_score = -5;
         MahimahiProtobufs::RequestResponse best_match;
 
         for ( const auto & filename : files ) {
@@ -158,11 +161,12 @@ int main( void )
                 throw runtime_error( filename + ": invalid HTTP request/response" );
             }
 
-            unsigned score = match_score( current_record, request_line, is_https );
-            if ( score > best_score ) {
+            int score = match_score( current_record, request_line, is_https );
+            if ( score > 0 and score >  best_score ) {
                 best_match = current_record;
                 best_score = score;
-            }
+            } else if (score < 0 and score > best_score)
+                best_score = score;
         }
 
         //if (duration) delay(duration);
@@ -172,8 +176,11 @@ int main( void )
             return EXIT_SUCCESS;
         } else {                /* no acceptable matches for request */
             cout << "HTTP/1.1 404 Not Found" << CRLF;
-            cout << "Content-Type: text/plain" << CRLF << CRLF;
+            cout << "Content-Type: text/plain" << CRLF;
+            cout << "Access-Control-Allow-Origin: *" << CRLF;
             cout << "replayserver: could not find a match for " << request_line <<CRLF;
+            cout <<"Best_score: " << best_score << CRLF;
+            cout << "Log: " << log <<CRLF << CRLF;
             return EXIT_FAILURE;
         }
     } catch ( const exception & e ) {
