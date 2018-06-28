@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 repo = sys.argv[1] if sys.argv[1] != '' else 'ftp'
 pkts = rdpcap(os.path.join(repo, 'traffic.pcap'))
-# ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').readlines()
+ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').readlines()
 ip_map = {} # ip: [S, SA]
 host_map = {} # host: {url: delay}
 ping_map = {}
@@ -78,7 +78,20 @@ def main():
     f.close()
     f2.close()
 
-
+    while ttfb[-1] == '':
+        del ttfb[-1]
+    for t in ttfb:
+        parse_result = urlparse(t.split('\t')[0])
+        host = parse_result.netloc
+        uri = parse_result.path
+        if host not in host_map:
+            host_map[host] = {}
+        host_map[host][uri] = float(t.split('\t')[1])
+    for host, uri_delay in host_map.items():
+        f = open(os.path.join(repo, host), 'w+')
+        for uri, delay in uri_delay.items():
+            f.write('{}\t{}\n'.format(uri, delay))
+        f.close()
 
 if __name__ == '__main__':
     main()

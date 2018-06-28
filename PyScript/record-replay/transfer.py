@@ -12,7 +12,7 @@ import sys
 from urllib.parse import *
 
 ip_delays = {} # Used for cache-latency
-proxy_delay = 0.01
+proxy_delay = 0
 repo = join(os.environ['mmpath'], 'tmp', sys.argv[1]) if sys.argv[1] != '' else join(os.environ['mmpath'], 'tmp', 'ftp')
 save_list = os.listdir(repo)
 save_list = list (filter(lambda x: x[:5] == 'save.', save_list))
@@ -121,6 +121,7 @@ def init_ttfb():
         uri = parse_result.path
         if host not in url_ttfb:
             url_ttfb[host] = {}
+            call(['rm', join(repo, host)])
         url_ttfb[host][uri] = float(t.split('\t')[1])
 
 

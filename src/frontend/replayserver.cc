@@ -24,7 +24,7 @@
 
 using namespace std;
 
-string log = "";
+//string log = "";
 
 string safe_getenv( const string & key )
 {
@@ -94,7 +94,7 @@ int match_score( const MahimahiProtobufs::RequestResponse & saved_record,
 
     /* must match first line up to "?" at least */
     if ( strip_query( request_line ) != strip_query( saved_request.first_line() ) ) {
-        log += strip_query( request_line ) + " vs. " + strip_query( saved_request.first_line() ) + " | ";
+        //log += strip_query( request_line ) + " vs. " + strip_query( saved_request.first_line() ) + " | ";
         return -1;
     }
 
@@ -179,8 +179,8 @@ int main( void )
             cout << "Content-Type: text/plain" << CRLF;
             cout << "Access-Control-Allow-Origin: *" << CRLF;
             cout << "replayserver: could not find a match for " << request_line <<CRLF;
-            cout <<"Best_score: " << best_score << CRLF;
-            cout << "Log: " << log <<CRLF << CRLF;
+            cout <<"Best_score: " << best_score << CRLF << CRLF;
+            //cout << "Log: " << log <<CRLF << CRLF;
             return EXIT_FAILURE;
         }
     } catch ( const exception & e ) {

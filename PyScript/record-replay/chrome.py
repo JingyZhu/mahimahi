@@ -49,8 +49,8 @@ if record:
     filter('tmp', end-begin)
 
 stage = 'record' if record else 'replay'
-fuck = urlparse(web).netloc if urlparse(web).netloc != '' else 'ftp'
-time_collection = open(os.path.join('plTime', fuck), 'a')
+debug_url = urlparse(web).netloc if urlparse(web).netloc != '' else 'ftp'
+time_collection = open(os.path.join('plTime', debug_url), 'a')
 time_collection.write("{}\t{}\n".format(stage, str(end-begin)))
 time_collection.close()
 
