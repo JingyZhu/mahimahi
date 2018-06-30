@@ -11,6 +11,7 @@ while web_list[-1] == "":
 
 mmwebreplay = os.path.join(os.environ['mmpath'], 'usr/bin/mm-webreplay')
 mmlink = os.path.join(os.environ['mmpath'], 'usr/bin/mm-link')
+mmdelay = os.path.join(os.environ['mmpath'], 'usr/bin/mm-delay')
 repo =  os.path.join(os.environ['mmpath'], 'tmp')
 
 i = 0
@@ -23,6 +24,6 @@ for web in web_list:
     print(str(i) + " replay: " + aurl)
     web = web[0]
     try:
-        call([mmwebreplay, os.path.join(repo, web), mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url], timeout=60, env=os.environ.copy())#, stdout=FNULL, stderr=STDOUT)
+        call([mmwebreplay, os.path.join(repo, web), mmdelay, '0', os.path.join(repo, web), '--', mmlink, 'trace_file', 'trace_file', '--', 'python3', 'chrome.py', url], timeout=60, env=os.environ.copy())#, stdout=FNULL, stderr=STDOUT)
     except:
         call(['pkill', 'chromium'])

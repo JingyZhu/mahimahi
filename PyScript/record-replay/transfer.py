@@ -163,7 +163,7 @@ def main():
        
         redirect = http_record_pb2.RequestResponse()
         origin = http_record_pb2.RequestResponse()
-        option = http_record_pb2.RequestResponse()
+        # option = http_record_pb2.RequestResponse()
         redirect.CopyFrom(response)
         origin.CopyFrom(response)
 
@@ -179,8 +179,8 @@ def main():
         newheader.value = b'*'
 
         # determine whether cacheable
-        cacheable = if_cacheable(response.response.header) \
-                    and response.scheme == http_record_pb2.RequestResponse.HTTPS
+        cacheable = False# if_cacheable(response.response.header) \
+                    #and response.scheme == http_record_pb2.RequestResponse.HTTPS
 
         # Setup new host's delay and ip
         new_host = modify_location(host, cacheable)
@@ -221,7 +221,7 @@ def main():
             newheader.value = b'*'
 
         # Writet option request and response
-        option.CopyFrom(option_response(origin))
+        # option.CopyFrom(option_response(origin))
 
         # Set redirection location (full url)
         location = redirect.response.header.add()
@@ -232,7 +232,7 @@ def main():
         content_length.CopyFrom(HTTPHeader(b'Content-Length', b'0'))
         
         fd2, path2 = tempfile.mkstemp('', 'save.', repo)
-        fd3, path3 = tempfile.mkstemp('', 'save.', repo)
+        # fd3, path3 = tempfile.mkstemp('', 'save.', repo)
         # print(path1 + '\n' + path2)
         # fd0 = open(join(repo, save.replace('save', 'response')), 'w+')
         # fd1 = open(join(repo, save.replace('save', 'origin')), 'w+')
@@ -240,10 +240,10 @@ def main():
         fd1 = open(join(repo, save), 'wb+')
         fd1.write(redirect.SerializeToString())
         os.write(fd2, origin.SerializeToString())
-        os.write(fd3, option.SerializeToString())
+        # os.write(fd3, option.SerializeToString())
         fd1.close()
         os.close(fd2)
-        os.close(fd3)
+        # os.close(fd3)
         # print((list(response.response.header)[0]))
     # return
     traffic = open(join(repo, 'traffic.txt'), 'w+')
