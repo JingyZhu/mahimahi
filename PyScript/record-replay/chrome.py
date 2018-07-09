@@ -25,7 +25,7 @@ def filter(temp, delay):
     while ttfb[-1] == '':
         del ttfb[-1]
     for t in ttfb:
-        if float(t.split('\t')[1]) / delay > 0.01:
+        if float(t.split('\t')[1]) / delay > 0.05:
             new_ttfb.append(t)
     tmp = open(temp, 'w+')
     for t in new_ttfb:

@@ -179,8 +179,8 @@ def main():
         newheader.value = b'*'
 
         # determine whether cacheable
-        cacheable = if_cacheable(response.response.header)
-                    # and response.scheme == http_record_pb2.RequestResponse.HTTP
+        cacheable = if_cacheable(response.response.header) \
+                    and response.scheme == http_record_pb2.RequestResponse.HTTP
 
         # Setup new host's delay and ip
         new_host = modify_location(host, cacheable)
