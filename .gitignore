@@ -2,6 +2,7 @@
 *.o
 *.lo
 *.la
+*.log
 *.slo
 *.json
 .deps

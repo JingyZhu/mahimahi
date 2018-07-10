@@ -3,9 +3,18 @@ const fs = require('fs')
 
 let loaded = 0;
 
+let firstWillBeSent = false;
+let firstSent = false;
+
+let reqWillBeSent = null;
+let reqSent = null;
+
 let id_url = {};
 let received_time = {};
 let load = {};
+
+let end = null;
+let begin = null;
 
 CDP((client) => {
     // extract domains
@@ -25,15 +34,26 @@ CDP((client) => {
     } 
     else {
         Network.responseReceived( (param) => {
-            if (param.response.timing != null){
-                let url = param.response.url;
-                id_url[param.requestId] = url;
-                console.log(`Sent\t${param.requestId}\t${url}\t${param.response.timing.requestTime}`);
+            // if (param.response.timing != null){
+            //     let url = param.response.url;
+            //     id_url[param.requestId] = url;
+            //     console.log(`Sent\t${param.requestId}\t${url}\t${param.response.timing.requestTime}`);
+            // }
+            if (!firstSent){
+                reqSent = param.response.timing.requestTime;
+                firstSent = true;
             }
         });
-        Network.dataReceived( (param) => {
-            received_time[param.requestId] = param.timestamp;
+
+        Network.requestWillBeSent( (param) => {
+            if (!firstWillBeSent) {
+                reqWillBeSent = param.timestamp;
+                firstWillBeSent = true;
+            }
         });
+        // Network.dataReceived( (param) => {
+        //     received_time[param.requestId] = param.timestamp;
+        // });
     }
     /* else {
         Network.requestWillBeSent((params) => {
@@ -45,24 +65,31 @@ CDP((client) => {
     Network.loadingFinished( (param) => {
         loaded += 1;
         load[param.requestId] = 1;
+        received_time[param.requestId] = param.timestamp;
     });
-    Page.loadEventFired(async () => {
+    Page.loadEventFired( (param) => {
         client.close();
         if (process.argv[3] != "true") {
             let reqId;
-            for (reqId in load){
-                if (reqId in id_url){
-                    console.log(`Received\t${reqId}\t${id_url[reqId]}\t${received_time[reqId]}`);
-                }
-            }
+            end = Date.now();
+            // for (reqId in load){
+            //     if (reqId in id_url && reqId in  received_time){
+            //         console.log(`Received\t${reqId}\t${id_url[reqId]}\t${received_time[reqId]}`);
+            //     }
+            // }
 
             console.log(`Loaded: ${loaded}`);
+            console.log(`Difference: ${reqSent-reqWillBeSent}`);
             /*const {data} = await Page.captureScreenshot();
             fs.writeFile(process.argv[3] + '.png', Buffer.from(data, 'base64'), (err) => {
                 if (err) throw err;
 
                 //console.log("ScreenShot saved!");
             });*/
+
+            fs.appendFile(process.argv[3], `replay\t${ (end-begin)/1000 }\n`, (err) => {
+                if (err) throw err;
+            });
         }
     });
 
@@ -71,6 +98,7 @@ CDP((client) => {
         Network.enable(),
         Page.enable()
     ]).then(() => {
+        begin = Date.now();
         return Page.navigate({ url: process.argv[2] });
     }).catch((err) => {
         console.error(err);

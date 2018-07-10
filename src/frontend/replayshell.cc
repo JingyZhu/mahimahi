@@ -45,6 +45,8 @@ int main( int argc, char *argv[] )
     try {
         /* clear environment */
         char **user_environment = environ;
+        string mmpath = getenv("mmpath");
+        cout << "mmpath: " << mmpath << endl;
         environ = nullptr;
 
         check_requirements( argc, argv );
@@ -182,6 +184,7 @@ int main( int argc, char *argv[] )
         /* start dnsmasq */
         event_loop.add_child_process( start_dnsmasq( dnsmasq_args ) );
 
+        run({"/usr/bin/sudo", mmpath + "/mahimahi/slow", "4G", "-d", "lo"});
         /* start shell */
         event_loop.add_child_process( join( command ), [&]() {
                 drop_privileges();

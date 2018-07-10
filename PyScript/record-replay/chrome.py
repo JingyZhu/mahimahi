@@ -42,7 +42,7 @@ begin = time.time()
 if record:
     call(['node', 'run.js', web, 'true'], stdout=temp)
 else:
-    call(['node', 'run.js', web, os.path.join('screenshot', urlparse(web).netloc)])
+    call(['node', 'run.js', web, os.path.join('plTime', urlparse(web).netloc)])
 end = time.time()
 
 if record:
@@ -50,10 +50,10 @@ if record:
 
 stage = 'record' if record else 'replay'
 debug_url = urlparse(web).netloc if urlparse(web).netloc != '' else 'ftp'
-if not record:
-    time_collection = open(os.path.join('plTime', debug_url), 'a')
-    time_collection.write("{}\t{}\n".format(stage, str(end-begin)))
-    time_collection.close()
+#if not record:
+#    time_collection = open(os.path.join('plTime', debug_url), 'a')
+#    time_collection.write("{}\t{}\n".format(stage, str(end-begin)))
+#    time_collection.close()
 
 time.sleep(1)
 
