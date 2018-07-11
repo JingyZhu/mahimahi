@@ -120,7 +120,7 @@ do
        4G)
          command=slow
          bandwidth=9mbit
-         latency=85ms
+         latency=200ms
          ;;
        modem-0.1k|modem-110)
          command=slow
@@ -288,10 +288,10 @@ case $command in
     # Answer: http://superuser.com/a/147434/159810
     if  tc qdisc show dev $device | grep "qdisc htb 1: root" >/dev/null; then
       verb=change
-      # echo "Changing existing queuing discipline"
+      echo "Changing existing queuing discipline"
     else
       verb=add
-      # echo "Adding new queuing discipline"
+      echo "Adding new queuing discipline"
       tc qdisc $verb dev $device root handle 1: htb default 11
     fi
     tc class $verb dev $device parent 1:1 classid 1:11 htb rate $bandwidth ceil $bandwidth  &&

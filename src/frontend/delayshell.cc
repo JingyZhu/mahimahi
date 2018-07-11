@@ -66,7 +66,7 @@ int main( int argc, char *argv[] )
         delay_shell_app.start_uplink( "[delay " + to_string( delay_ms ) + " ms] ",
                                       command, 
                                       delay_ms, ip_delays);
-        delay_shell_app.start_downlink( delay_ms, ip_delays);
+        delay_shell_app.start_downlink( 0, ip_delays);
         return delay_shell_app.wait_for_exit();
     } catch ( const exception & e ) {
         print_exception( e );

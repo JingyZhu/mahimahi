@@ -22,7 +22,7 @@ CDP((client) => {
     // console.log(Security);
 
     Security.setIgnoreCertificateErrors({ ignore: true });
-    //Security.disable();
+    //Security.disable()
 
     // setup handlers
     if (process.argv[3] == "true") {
@@ -33,6 +33,13 @@ CDP((client) => {
         });
     } 
     else {
+        Network.emulateNetworkConditions({
+            offline: false,
+            latency: 0,
+            downloadThroughput: 1024*1024*9/8,
+            uploadThroughput: 1024*1024*9/8,
+            connectionType: 'cellular4g'
+        });
         Network.responseReceived( (param) => {
             // if (param.response.timing != null){
             //     let url = param.response.url;

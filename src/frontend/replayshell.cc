@@ -45,7 +45,7 @@ int main( int argc, char *argv[] )
     try {
         /* clear environment */
         char **user_environment = environ;
-        string mmpath = getenv("mmpath");
+        //string mmpath = getenv("mmpath");
         //cout << "mmpath: " << mmpath << endl;
         environ = nullptr;
 
@@ -108,6 +108,7 @@ int main( int argc, char *argv[] )
             while(getline(in, line)) {
                 istringstream is(line);
                 is >> ip >> delay;
+		if (delay < 0) delay=0;
                 ip_delays[ip] = delay * 1000;
             }
         }
@@ -184,7 +185,7 @@ int main( int argc, char *argv[] )
         /* start dnsmasq */
         event_loop.add_child_process( start_dnsmasq( dnsmasq_args ) );
 
-        run({"/usr/bin/sudo", mmpath + "/mahimahi/slow", "4G", "-d", "lo"});
+        //run({"/usr/bin/sudo", mmpath + "/mahimahi/slow", "4G", "-d", "sharded1"});
         /* start shell */
         event_loop.add_child_process( join( command ), [&]() {
                 drop_privileges();
