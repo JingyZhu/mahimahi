@@ -31,7 +31,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 VERSION=0.1
-device=enp0s3
+device=ens5
 bandwidth=100kbps
 latency=350ms
 packetloss=
@@ -120,7 +120,7 @@ do
        4G)
          command=slow
          bandwidth=9mbit
-         latency=200ms
+         latency=85ms
          ;;
        modem-0.1k|modem-110)
          command=slow
@@ -232,14 +232,14 @@ do
   esac
 
   # for testing purposes:
-  echo "param $1"
+  # echo "param $1"
 
   shift
 done
 
-echo "command=$command"
-echo "bandwidth=$bandwidth"
-echo "latency=$latency"
+#echo "command=$command"
+#echo "bandwidth=$bandwidth"
+#echo "latency=$latency"
 
 case $command in
   help)
@@ -288,10 +288,10 @@ case $command in
     # Answer: http://superuser.com/a/147434/159810
     if  tc qdisc show dev $device | grep "qdisc htb 1: root" >/dev/null; then
       verb=change
-      echo "Changing existing queuing discipline"
+      # echo "Changing existing queuing discipline"
     else
       verb=add
-      echo "Adding new queuing discipline"
+      # echo "Adding new queuing discipline"
       tc qdisc $verb dev $device root handle 1: htb default 11
     fi
     tc class $verb dev $device parent 1:1 classid 1:11 htb rate $bandwidth ceil $bandwidth  &&

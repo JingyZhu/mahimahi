@@ -46,7 +46,7 @@ int main( int argc, char *argv[] )
         /* clear environment */
         char **user_environment = environ;
         string mmpath = getenv("mmpath");
-        cout << "mmpath: " << mmpath << endl;
+        //cout << "mmpath: " << mmpath << endl;
         environ = nullptr;
 
         check_requirements( argc, argv );
