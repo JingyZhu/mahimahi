@@ -12,7 +12,7 @@ import sys
 from urllib.parse import *
 
 ip_delays = {} # Used for cache-latency
-proxy_delay = 10/1000
+proxy_delay = 2/1000
 repo = join(os.environ['mmpath'], 'tmp', sys.argv[1]) if sys.argv[1] != '' else join(os.environ['mmpath'], 'tmp', 'ftp')
 save_list = os.listdir(repo)
 save_list = list (filter(lambda x: x[:5] == 'save.', save_list))
@@ -250,7 +250,7 @@ def main():
     # return
     traffic = open(join(repo, 'traffic.txt'), 'w+')
     for host in hosts_ips:
-        ip_delays[hosts_ips[host][0]] = -170/1000
+        ip_delays[hosts_ips[host][0]] = 0 # in secs
     for ip, delay in ip_delays.items():
         traffic.write('{}\t{}\n'.format(ip, delay))
     traffic.close()

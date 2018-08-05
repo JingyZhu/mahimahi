@@ -10,10 +10,12 @@ import subprocess
 from subprocess import Popen
 from math import ceil
 from urllib.parse import urlparse
+from random import sample
 
 repo = sys.argv[1] if sys.argv[1] != '' else 'ftp'
 pkts = rdpcap(os.path.join(repo, 'traffic.pcap'))
 ttfb = open(os.path.join(repo, 'ttfb.txt'), 'r').readlines()
+random_rtt = open('cdf_data', 'r').readlines()
 ip_map = {} # ip: [S, SA]
 host_map = {} # host: {url: delay}
 ping_map = {}
@@ -69,10 +71,14 @@ def main():
 
     f = open(os.path.join(os.environ['PWD'], 'RTT', os.path.basename(repo)) , 'w+')
     f2 = open(os.path.join(sys.argv[1], 'traffic.txt'), 'w+')
+
+    rtt_sample = sample(random_rtt, len(ip_map))
+    count = -1
     for ip, times in ip_map.items():
+        count += 1
         if len(times) < 2:
             continue
-        rtt = times[1] - times[0]
+        rtt = max(0.0, float(rtt_sample[count]) * 2 -0.029)
         f.write('{}\t{}\n'.format(ip, rtt))
         f2.write('{}\t{}\n'.format(ip, rtt))
     f.close()

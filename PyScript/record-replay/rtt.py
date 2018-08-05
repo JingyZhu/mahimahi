@@ -4,12 +4,12 @@ mmpath = os.environ['mmpath']
 
 ip_rtt = {}
 
-webs = open('weblist', 'r').readlines()
+webs = os.listdir('RTT')
 
 
 for dirr in webs:
     dirr = dirr.split(',')[0]
-    traffic = open(join(mmpath, 'tmp', dirr, 'traffic.txt'), 'r').readlines()
+    traffic = open(join('RTT', dirr), 'r').readlines()
     for ip_delays in traffic:
         ip_delays = ip_delays.strip('\n').split('\t')
         ip = ip_delays[0]

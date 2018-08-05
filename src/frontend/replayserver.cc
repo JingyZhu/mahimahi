@@ -110,7 +110,7 @@ int match_score( const MahimahiProtobufs::RequestResponse & saved_record,
     return max_match;
 }
 
-static float find_delays(const string &host, const string &recording_dir, const string &uri)
+/*static float find_delays(const string &host, const string &recording_dir, const string &uri)
 {
     float delay = 0;
     ifstream in(recording_dir + "/" + host);
@@ -128,7 +128,7 @@ static float find_delays(const string &host, const string &recording_dir, const 
         }
     }
     return delay;
-}
+}*/
 
 int main( void )
 {
@@ -144,7 +144,7 @@ int main( void )
         const bool is_https = getenv( "HTTPS" );
         const string host = safe_getenv( "HTTP_HOST" );
         const string uri = safe_getenv( "REQUEST_URI" );
-        const unsigned rtt_delay = stoi(safe_getenv("RTT_DELAY"));
+        //const unsigned rtt_delay = stoi(safe_getenv("RTT_DELAY"));
         SystemCall( "chdir", chdir( working_directory.c_str() ) );
 
         const vector< string > files = list_directory_contents( recording_directory );
@@ -171,7 +171,7 @@ int main( void )
 
         //if (duration) delay(duration);
         if ( best_score > 0 ) { /* give client the best match */
-            delay(max(0, int(find_delays(host, recording_directory, strip_query(uri))) - int(rtt_delay)) );
+            //delay(max(0, int(find_delays(host, recording_directory, strip_query(uri))) - int(rtt_delay)) );
             cout << HTTPResponse( best_match.response() ).str();
             return EXIT_SUCCESS;
         } else {                /* no acceptable matches for request */

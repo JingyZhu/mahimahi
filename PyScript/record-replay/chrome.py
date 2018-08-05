@@ -42,7 +42,7 @@ begin = time.time()
 if record:
     call(['node', 'run.js', web, 'true'], stdout=temp)
 else:
-    call(['node', 'run.js', web, os.path.join('plTime', urlparse(web).netloc)])
+    call(['node', 'run.js', web, urlparse(web).netloc, sys.argv[2] ])
 end = time.time()
 
 if record:

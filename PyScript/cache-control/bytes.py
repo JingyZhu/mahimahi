@@ -6,7 +6,9 @@ total = 0
 cachable = 0
 cached = {}
 http = {}
+https = {}
 httpcachable = 0
+ishttps = 0
 
 web = sys.argv[1]
 tmp = os.path.join('tmp', web)
@@ -21,6 +23,8 @@ for line in rfile:
         scheme = urlparse(line[2]).scheme
         if scheme == 'http':
             http[line[1]] = 0
+        elif scheme == 'https':
+            https[line[1]] = 0
     elif line[0] == '2':
         cached[line[1]] = 0
     elif line[0] == '3':
@@ -29,9 +33,11 @@ for line in rfile:
             cachable += int(line[2])
             if line[1] in http:
                 httpcachable += int(line[2])
+        if line[1] in https:
+            ishttps += int(line[2])
 
 byte = os.path.join('bytes', web)
 bfile = open(byte, 'a')
 if total != 0:
-    bfile.write('all: {}\nhttp: {}\n'.format(str( cachable / total ), str(httpcachable / total) ))
+    bfile.write('all: {}\nhttpcacheable: {}\nhttps: {}\n'.format(str( cachable / total ), str(httpcachable / total), str(ishttps/total) ))
 bfile.close()

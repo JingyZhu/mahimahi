@@ -12,6 +12,6 @@ mmdelay = os.path.join(os.environ['mmpath'], 'usr/bin/mm-delay')
 repo =  os.path.join(os.environ['mmpath'], 'tmp')
 
 try:
-    call([mmwebreplay, os.path.join(repo, web), mmdelay, '170', os.path.join(repo, web), '--', 'python3', 'chrome.py', url], timeout=60, env=os.environ.copy())
+    call([mmwebreplay, os.path.join(repo, web), mmdelay, '0', os.path.join(repo, web), '--', 'python3', 'chrome.py', url, sys.argv[2]], timeout=60, env=os.environ.copy())
 except Exception as e:
     print(str(e))
